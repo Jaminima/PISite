@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -9,14 +11,35 @@ namespace PIApp
 {
     static internal class Listener
     {
-        static HttpListener _listener;
+        private static HttpListener _listener;
 
         private static void ReqBegin(IAsyncResult result)
         {
             var context = _listener.EndGetContext(result);
             _listener.BeginGetContext(ReqBegin, null);
 
-            Console.WriteLine($"Request Received: {context.Request.Url.ToString()}");
+            Console.WriteLine($"Request Received: {context.Request.RawUrl}");
+
+            var writer = new StreamWriter(context.Response.OutputStream);
+
+            if (RequestRegistrar.Find(context.Request.RawUrl, out var requestFunc))
+            {
+                var res = requestFunc.callback(context);
+
+                context.Response.StatusCode = res.status;
+
+                writer.Write(JObject.FromObject(res.data).ToString(Newtonsoft.Json.Formatting.None));
+                writer.Flush();
+                writer.Close();
+            }
+            else
+            {
+                context.Response.StatusCode = 404;
+
+                writer.Write(JObject.FromObject(new { message = "Unable To Locate Path" }).ToString(Newtonsoft.Json.Formatting.None));
+                writer.Flush();
+                writer.Close();
+            }
         }
 
         public static void Init(int port = 8080)
