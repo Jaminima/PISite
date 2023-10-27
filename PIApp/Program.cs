@@ -26,6 +26,8 @@ namespace PIApp
 
             RequestRegistrar.Register(new RequestFunc("/", "GET",A));
 
+            FileServer.Init();
+
             Listener.Init();
 
             while (true)

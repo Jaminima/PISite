@@ -27,6 +27,7 @@ namespace PIApp
 
             if (RequestRegistrar.Find(route, out var requestFunc))
             {
+
                 var res = requestFunc.callback(context);
 
                 context.Response.StatusCode = res.status;
@@ -34,6 +35,10 @@ namespace PIApp
                 writer.Write(JObject.FromObject(res.data).ToString(Newtonsoft.Json.Formatting.None));
                 writer.Flush();
                 writer.Close();
+            }
+            else if (FileServer.Find(route, context))
+            {
+                context.Response.StatusCode = 200;
             }
             else
             {
