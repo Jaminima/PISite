@@ -32,9 +32,9 @@ namespace PIApp
 
                 context.Response.StatusCode = res.status;
 
-                writer.Write(JObject.FromObject(res.data).ToString(Newtonsoft.Json.Formatting.None));
-                writer.Flush();
-                writer.Close();
+                writer.Write(Jil.JSON.Serialize(res.data));
+
+                //writer.Write(JObject.FromObject(res.data).ToString(Newtonsoft.Json.Formatting.None));
             }
             else if (FileServer.Find(route, context))
             {
@@ -44,10 +44,11 @@ namespace PIApp
             {
                 context.Response.StatusCode = 404;
 
-                writer.Write(JObject.FromObject(new { message = "Unable To Locate Path" }).ToString(Newtonsoft.Json.Formatting.None));
-                writer.Flush();
-                writer.Close();
+                writer.Write(Jil.JSON.Serialize(new { message = "Unable To Locate Path" }));
+                //writer.Write(JObject.FromObject(new { message = "Unable To Locate Path" }).ToString(Newtonsoft.Json.Formatting.None));
             }
+            writer.Flush();
+            writer.Close();
         }
 
         public static void Init(int port = 8080)
