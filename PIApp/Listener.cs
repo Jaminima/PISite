@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -18,11 +19,13 @@ namespace PIApp
             var context = _listener.EndGetContext(result);
             _listener.BeginGetContext(ReqBegin, null);
 
-            Console.WriteLine($"Request Received: {context.Request.RawUrl}");
+            Console.WriteLine($"Request Received: {context.Request.HttpMethod} - {context.Request.RawUrl}");
 
             var writer = new StreamWriter(context.Response.OutputStream);
 
-            if (RequestRegistrar.Find(context.Request.RawUrl, out var requestFunc))
+            var route = new Route() { path = context.Request.RawUrl, method = context.Request.HttpMethod };
+
+            if (RequestRegistrar.Find(route, out var requestFunc))
             {
                 var res = requestFunc.callback(context);
 
@@ -45,7 +48,12 @@ namespace PIApp
         public static void Init(int port = 8080)
         {
             _listener = new HttpListener();
-            _listener.Prefixes.Add($"http://+:{port}/");
+
+            if (Debugger.IsAttached) 
+                _listener.Prefixes.Add($"http://localhost:{port}/");
+            else
+                _listener.Prefixes.Add($"http://+:{port}/");
+
             _listener.Start();
             _listener.BeginGetContext(ReqBegin, null);
         }

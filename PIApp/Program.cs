@@ -24,7 +24,7 @@ namespace PIApp
         {
             Console.WriteLine("Hello World");
 
-            RequestRegistrar.Register(new RequestFunc("/",A));
+            RequestRegistrar.Register(new RequestFunc("/", "GET",A));
 
             Listener.Init();
 

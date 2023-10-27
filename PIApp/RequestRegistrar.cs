@@ -14,34 +14,52 @@ namespace PIApp
         public int status = 200;
     }
 
+    public class Route
+    {
+        public string path;
+        public string method;
+
+        public bool RouteMatch(Route enemy)
+        {
+            return path == enemy.path && method == enemy.method;
+        }
+    }
+
     public class RequestFunc
     {
         public Func<HttpListenerContext, ResponseState> callback;
+        public Route route;
 
-        public string path;
-
-        public RequestFunc(string path, Func<HttpListenerContext, ResponseState> callback)
+        public RequestFunc(Route route, Func<HttpListenerContext, ResponseState> callback)
         {
             this.callback = callback;
-            this.path = path;
+            this.route = route;
+        }
+
+        public RequestFunc(string path, string method, Func<HttpListenerContext, ResponseState> callback)
+        {
+            this.callback = callback;
+            this.route = new Route() { method = method, path = path };
         }
     }
 
     public static class RequestRegistrar
     {
-        private static Dictionary<string, RequestFunc> requestFuncs = new Dictionary<string, RequestFunc>();
+        private static List<RequestFunc> requestFuncs = new List<RequestFunc>();
 
         public static void Register(RequestFunc requestFunc)
         {
-            if (requestFuncs.ContainsKey(requestFunc.path))
+            if (requestFuncs.Any(x=>x.route.RouteMatch(requestFunc.route)))
                 throw new Exception("Path Already Registered");
 
-            requestFuncs.Add(requestFunc.path, requestFunc);
+            requestFuncs.Add(requestFunc);
         }
 
-        public static bool Find(string path, out RequestFunc requestFunc)
+        public static bool Find(Route route, out RequestFunc requestFunc)
         {
-            return requestFuncs.TryGetValue(path, out requestFunc);
+            requestFunc = requestFuncs.Find(x => x.route.RouteMatch(route));
+
+            return requestFunc != null;
         }
     }
 }
