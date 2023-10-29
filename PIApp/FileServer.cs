@@ -30,7 +30,7 @@ namespace PIApp
                     fs.CopyTo(context.Response.OutputStream);
                 }
 
-                context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc);
+                context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc.Split('/').Last());
                 Console.WriteLine($"Returned File {route.path}");
                 return true;
             }
