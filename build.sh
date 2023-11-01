@@ -2,9 +2,9 @@
 
 rm -r -f ./app
 
-xbuild ./PIApp/PIApp.csproj
+xbuild /property:Configuration=Release ./PIApp/PIApp.csproj
 
-cp -r ./PIApp/bin/Debug/ ./app/
+cp -r ./PIApp/bin/Release/ ./app/
 
 cd pisite
 
