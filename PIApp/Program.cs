@@ -22,8 +22,6 @@ namespace PIApp
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World");
-
             RequestRegistrar.Register(new RequestFunc("/api/test", "GET",A));
 
             Listener.Init();

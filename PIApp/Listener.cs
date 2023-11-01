@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace PIApp
 {
-    static internal class Listener
+    public static class Listener
     {
         private static HttpListener _listener;
 
@@ -54,6 +54,8 @@ namespace PIApp
 
         public static void Init(int port = 8080)
         {
+            Console.WriteLine($"Starting Up HTTP Server On {port}");
+
             _listener = new HttpListener();
 
             if (Debugger.IsAttached) 
