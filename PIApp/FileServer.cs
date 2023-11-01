@@ -38,7 +38,7 @@ namespace PIApp
                 }
 
                 context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc.Split('/').Last());
-                Console.WriteLine($"Returned File {route.path}");
+                Console.WriteLine($"Returned File {fileSrc}");
                 return true;
             }
             return false;
