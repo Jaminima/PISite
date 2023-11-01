@@ -21,19 +21,19 @@ namespace PIApp
 
             Console.WriteLine($"Request Received: {context.Request.HttpMethod} - {context.Request.RawUrl}");
 
-            var writer = new StreamWriter(context.Response.OutputStream);
-
             var route = new Route() { path = context.Request.RawUrl, method = context.Request.HttpMethod };
 
             if (RequestRegistrar.Find(route, out var requestFunc))
             {
+                var writer = new StreamWriter(context.Response.OutputStream);
 
                 var res = requestFunc.callback(context);
 
                 context.Response.StatusCode = res.status;
 
                 writer.Write(Jil.JSON.Serialize(res.data));
-
+                writer.Flush();
+                writer.Close();
                 //writer.Write(JObject.FromObject(res.data).ToString(Newtonsoft.Json.Formatting.None));
             }
             else if (FileServer.Find(route, context))
@@ -42,13 +42,15 @@ namespace PIApp
             }
             else
             {
+                var writer = new StreamWriter(context.Response.OutputStream);
+
                 context.Response.StatusCode = 404;
 
                 writer.Write(Jil.JSON.Serialize(new { message = "Unable To Locate Path" }));
+                writer.Flush();
+                writer.Close();
                 //writer.Write(JObject.FromObject(new { message = "Unable To Locate Path" }).ToString(Newtonsoft.Json.Formatting.None));
             }
-            writer.Flush();
-            writer.Close();
         }
 
         public static void Init(int port = 8080)

@@ -23,11 +23,18 @@ namespace PIApp
 
             string fileSrc = filePath + "/" + trimmed_file;
 
+            var os = context.Response.OutputStream;
+
             if (File.Exists(fileSrc))
             {
-                using (var fs = new FileStream(fileSrc, FileMode.Open))
+                using (var fs = new FileStream(fileSrc, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    fs.CopyTo(context.Response.OutputStream);
+                    fs.CopyTo(os);
+                    fs.Flush();
+                    fs.Close();
+
+                    os.Flush();
+                    os.Close();
                 }
 
                 context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc.Split('/').Last());
