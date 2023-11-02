@@ -1,16 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PIApp_Lib
 {
     internal class FileServer
     {
+        #region Fields
+
         private static string filePath = "./site";
+
+        #endregion Fields
+
+        #region Methods
 
         public static bool Find(Route route, HttpListenerContext context)
         {
@@ -43,5 +45,7 @@ namespace PIApp_Lib
             }
             return false;
         }
+
+        #endregion Methods
     }
 }

@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PIApp_Lib
 {
     internal class Program
     {
-        static ResponseState A(HttpListenerContext context)
+        #region Methods
+
+        private static ResponseState A(HttpListenerContext context)
         {
             Console.WriteLine("A");
             return new ResponseState()
@@ -19,10 +17,9 @@ namespace PIApp_Lib
             };
         }
 
-
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            RequestRegistrar.Register(new RequestFunc("/api/test", "GET",A));
+            RequestRegistrar.Register(new RequestFunc("/api/test", "GET", A));
 
             Listener.Init();
 
@@ -31,5 +28,7 @@ namespace PIApp_Lib
                 Console.ReadLine();
             }
         }
+
+        #endregion Methods
     }
 }

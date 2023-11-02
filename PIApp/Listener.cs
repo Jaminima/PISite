@@ -1,17 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PIApp_Lib
 {
     public static class Listener
     {
+        #region Fields
+
         private static HttpListener _listener;
+
+        #endregion Fields
+
+        #region Methods
 
         private static void ReqBegin(IAsyncResult result)
         {
@@ -58,7 +60,7 @@ namespace PIApp_Lib
 
             _listener = new HttpListener();
 
-            if (Debugger.IsAttached) 
+            if (Debugger.IsAttached)
                 _listener.Prefixes.Add($"http://localhost:{port}/");
             else
                 _listener.Prefixes.Add($"http://+:{port}/");
@@ -66,5 +68,7 @@ namespace PIApp_Lib
             _listener.Start();
             _listener.BeginGetContext(ReqBegin, null);
         }
+
+        #endregion Methods
     }
 }
