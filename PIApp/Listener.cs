@@ -28,7 +28,7 @@ namespace PIApp_Lib
             {
                 var writer = new StreamWriter(context.Response.OutputStream);
 
-                var res = requestFunc.callback(context);
+                var res = requestFunc.callback(new RequestContext(context));
 
                 context.Response.StatusCode = res.status;
 

@@ -7,7 +7,7 @@ namespace PIApp_Lib
     {
         #region Methods
 
-        private static ResponseState A(HttpListenerContext context)
+        private static ResponseState A(RequestContext context)
         {
             Console.WriteLine("A");
             return new ResponseState()

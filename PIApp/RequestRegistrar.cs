@@ -37,20 +37,20 @@ namespace PIApp_Lib
     {
         #region Fields
 
-        public Func<HttpListenerContext, ResponseState> callback;
+        public Func<RequestContext, ResponseState> callback;
         public Route route;
 
         #endregion Fields
 
         #region Constructors
 
-        public RequestFunc(Route route, Func<HttpListenerContext, ResponseState> callback)
+        public RequestFunc(Route route, Func<RequestContext, ResponseState> callback)
         {
             this.callback = callback;
             this.route = route;
         }
 
-        public RequestFunc(string path, string method, Func<HttpListenerContext, ResponseState> callback)
+        public RequestFunc(string path, string method, Func<RequestContext, ResponseState> callback)
         {
             this.callback = callback;
             this.route = new Route() { method = method, path = path };
