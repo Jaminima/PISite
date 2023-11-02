@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Runtime;
 
 namespace PIApp_Lib
 {
@@ -35,7 +36,6 @@ namespace PIApp_Lib
                 writer.Write(Jil.JSON.Serialize(new { data = res.data, message = res.message}));
                 writer.Flush();
                 writer.Close();
-                //writer.Write(JObject.FromObject(res.data).ToString(Newtonsoft.Json.Formatting.None));
             }
             else if (FileServer.Find(route, context))
             {
@@ -50,7 +50,6 @@ namespace PIApp_Lib
                 writer.Write(Jil.JSON.Serialize(new { message = "Unable To Locate Path" }));
                 writer.Flush();
                 writer.Close();
-                //writer.Write(JObject.FromObject(new { message = "Unable To Locate Path" }).ToString(Newtonsoft.Json.Formatting.None));
             }
         }
 
