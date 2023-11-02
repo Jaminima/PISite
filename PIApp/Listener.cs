@@ -33,7 +33,7 @@ namespace PIApp_Lib
 
                 context.Response.StatusCode = res.status;
 
-                writer.Write(Jil.JSON.Serialize(new { data = res.data, message = res.message}));
+                writer.Write(Jil.JSON.SerializeDynamic(new { data = res.data, message = res.message}));
                 writer.Flush();
                 writer.Close();
             }
