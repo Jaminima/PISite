@@ -14,7 +14,7 @@ namespace PIApp_Lib
 
         #region Methods
 
-        public static bool Find(Route route, HttpListenerContext context)
+        public static bool Find(Route route, HttpListenerContext context, StreamWriter writer)
         {
             if (route.method != "GET")
                 return false;
@@ -25,18 +25,13 @@ namespace PIApp_Lib
 
             string fileSrc = filePath + "/" + trimmed_file;
 
-            var os = context.Response.OutputStream;
-
             if (File.Exists(fileSrc))
             {
                 using (var fs = new FileStream(fileSrc, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    fs.CopyTo(os);
+                    fs.CopyTo(writer.BaseStream);
                     fs.Flush();
                     fs.Close();
-
-                    os.Flush();
-                    os.Close();
                 }
 
                 context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc.Split('/').Last());

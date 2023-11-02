@@ -25,32 +25,30 @@ namespace PIApp_Lib
 
             var route = new Route() { path = context.Request.RawUrl, method = context.Request.HttpMethod };
 
+            var writer = new StreamWriter(context.Response.OutputStream);
+
             if (RequestRegistrar.Find(route, out var requestFunc))
             {
-                var writer = new StreamWriter(context.Response.OutputStream);
 
                 var res = await requestFunc.callback(new RequestContext(context));
 
                 context.Response.StatusCode = res.status;
 
                 writer.Write(Jil.JSON.SerializeDynamic(new { data = res.data, message = res.message}));
-                writer.Flush();
-                writer.Close();
             }
-            else if (FileServer.Find(route, context))
+            else if (FileServer.Find(route, context, writer))
             {
                 context.Response.StatusCode = 200;
             }
             else
             {
-                var writer = new StreamWriter(context.Response.OutputStream);
-
                 context.Response.StatusCode = 404;
 
                 writer.Write(Jil.JSON.Serialize(new { message = "Unable To Locate Path" }));
-                writer.Flush();
-                writer.Close();
             }
+
+            writer.Flush();
+            writer.Close();
         }
 
         public static void Init(int port = 8080)
