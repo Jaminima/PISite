@@ -38,7 +38,7 @@ namespace PIApp_Lib
                 }
 
                 context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc.Split('/').Last());
-                Console.WriteLine($"Returned File {fileSrc}");
+                //Console.WriteLine($"Returned File {fileSrc}");
                 return true;
             }
             return false;
