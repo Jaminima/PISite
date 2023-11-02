@@ -19,6 +19,9 @@ namespace PIApp_Lib
 
         public string GetBody()
         {
+            if (context.Request.HttpMethod == "GET")
+                throw new Exception("This Method Does Not Support A Body!");
+
             var s = new StreamReader(this.context.Request.InputStream);
             var str = s.ReadToEnd();
             s.Close();

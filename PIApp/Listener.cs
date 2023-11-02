@@ -15,7 +15,7 @@ namespace PIApp_Lib
 
         #region Methods
 
-        private static void ReqBegin(IAsyncResult result)
+        private static async void ReqBegin(IAsyncResult result)
         {
             var context = _listener.EndGetContext(result);
             _listener.BeginGetContext(ReqBegin, null);
@@ -28,11 +28,11 @@ namespace PIApp_Lib
             {
                 var writer = new StreamWriter(context.Response.OutputStream);
 
-                var res = requestFunc.callback(new RequestContext(context));
+                var res = await requestFunc.callback(new RequestContext(context));
 
                 context.Response.StatusCode = res.status;
 
-                writer.Write(Jil.JSON.Serialize(res.data));
+                writer.Write(Jil.JSON.Serialize(new { data = res.data, message = res.message}));
                 writer.Flush();
                 writer.Close();
                 //writer.Write(JObject.FromObject(res.data).ToString(Newtonsoft.Json.Formatting.None));

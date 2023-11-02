@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace PIApp_Lib
 {
@@ -37,20 +38,20 @@ namespace PIApp_Lib
     {
         #region Fields
 
-        public Func<RequestContext, ResponseState> callback;
+        public Func<RequestContext, Task<ResponseState>> callback;
         public Route route;
 
         #endregion Fields
 
         #region Constructors
 
-        public RequestFunc(Route route, Func<RequestContext, ResponseState> callback)
+        public RequestFunc(Route route, Func<RequestContext, Task<ResponseState>> callback)
         {
             this.callback = callback;
             this.route = route;
         }
 
-        public RequestFunc(string path, string method, Func<RequestContext, ResponseState> callback)
+        public RequestFunc(string path, string method, Func<RequestContext, Task<ResponseState>> callback)
         {
             this.callback = callback;
             this.route = new Route() { method = method, path = path };
