@@ -10,7 +10,7 @@ namespace PIApp_Lib
 {
     internal class FileServer
     {
-        private static string filePath = "./Site";
+        private static string filePath = "./site";
 
         public static bool Find(Route route, HttpListenerContext context)
         {
