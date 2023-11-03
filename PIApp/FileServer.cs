@@ -27,6 +27,9 @@ namespace PIApp_Lib
 
             if (File.Exists(fileSrc))
             {
+                context.Response.StatusCode = 200;
+                context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc.Split('/').Last());
+
                 using (var fs = new FileStream(fileSrc, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     fs.CopyTo(writer.BaseStream);
@@ -34,7 +37,6 @@ namespace PIApp_Lib
                     fs.Close();
                 }
 
-                context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc.Split('/').Last());
                 //Console.WriteLine($"Returned File {fileSrc}");
                 return true;
             }

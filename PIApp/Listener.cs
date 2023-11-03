@@ -38,7 +38,6 @@ namespace PIApp_Lib
             }
             else if (FileServer.Find(route, context, writer))
             {
-                context.Response.StatusCode = 200;
             }
             else
             {
