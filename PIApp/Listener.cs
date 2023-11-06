@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -12,6 +13,8 @@ namespace PIApp_Lib
 
         private static HttpListener _listener;
 
+        public static List<Action<HttpListenerContext>> middlewares = new List<Action<HttpListenerContext>>();
+
         #endregion Fields
 
         #region Methods
@@ -22,6 +25,8 @@ namespace PIApp_Lib
             _listener.BeginGetContext(ReqBegin, null);
 
             Console.WriteLine($"Request Received: {context.Request.HttpMethod} - {context.Request.RawUrl}");
+
+            middlewares.ForEach(x => x(context));
 
             var route = new Route() { path = context.Request.RawUrl, method = context.Request.HttpMethod };
 
