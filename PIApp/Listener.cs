@@ -24,7 +24,7 @@ namespace PIApp_Lib
             var context = _listener.EndGetContext(result);
             _listener.BeginGetContext(ReqBegin, null);
 
-            Console.WriteLine($"Request Received: {context.Request.HttpMethod} - {context.Request.RawUrl}");
+            //Console.WriteLine($"Request Received: {context.Request.HttpMethod} - {context.Request.RawUrl}");
 
             middlewares.ForEach(x => x(context));
 
@@ -39,7 +39,7 @@ namespace PIApp_Lib
 
                 context.Response.StatusCode = res.status;
 
-                writer.Write(Jil.JSON.SerializeDynamic(new { data = res.data, message = res.message}));
+                writer.Write(Jil.JSON.SerializeDynamic(new { data = res.data, message = res.message}, Jil.Options.IncludeInherited));
             }
             else if (FileServer.Find(route, context, writer))
             {
@@ -48,7 +48,7 @@ namespace PIApp_Lib
             {
                 context.Response.StatusCode = 404;
 
-                writer.Write(Jil.JSON.Serialize(new { message = "Unable To Locate Path" }));
+                writer.Write(Jil.JSON.Serialize(new { message = "404 - Unable To Locate Path" }));
             }
 
             writer.Flush();
