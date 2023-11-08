@@ -51,8 +51,15 @@ namespace PIApp_Lib
                 writer.Write(Jil.JSON.Serialize(new { message = "404 - Unable To Locate Path" }));
             }
 
-            writer.Flush();
-            writer.Close();
+            try
+            {
+                writer.Flush();
+                writer.Close();
+            }
+            catch
+            {
+                Console.WriteLine($"Req To {route.path} Failed");
+            }
         }
 
         public static void Init(int port = 8080)
