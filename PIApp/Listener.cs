@@ -44,7 +44,11 @@ namespace PIApp_Lib
 
                 context.Response.StatusCode = res.status;
 
-                writer.Write(Jil.JSON.SerializeDynamic(new { data = res.data, message = res.message}, Jil.Options.IncludeInherited));
+                var d = res.onlyData ? res.data : res;
+
+                var s = d.GetType() == typeof(string) ? d.ToString() : Jil.JSON.SerializeDynamic(d, Jil.Options.IncludeInherited);
+
+                writer.Write(s);
             }
             else if (FileServer.Find(route, context, writer))
             {

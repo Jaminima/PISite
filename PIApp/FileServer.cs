@@ -4,11 +4,11 @@ using System.Net;
 
 namespace PIApp_Lib
 {
-    internal class FileServer
+    public class FileServer
     {
         #region Fields
 
-        private static string filePath = "./site";
+        public static string filePath = "./site";
 
         #endregion Fields
 

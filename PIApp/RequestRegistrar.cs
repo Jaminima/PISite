@@ -10,7 +10,7 @@ namespace PIApp_Lib
     {
         #region Fields
 
-        private static List<RequestFunc> requestFuncs = new List<RequestFunc>();
+        public static List<RequestFunc> requestFuncs = new List<RequestFunc>();
 
         #endregion Fields
 
