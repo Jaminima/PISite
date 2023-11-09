@@ -67,6 +67,7 @@ namespace PIApp_Lib
         public object data;
         public string message;
         public int status = 200;
+        public bool onlyData = false;
 
         #endregion Fields
     }
