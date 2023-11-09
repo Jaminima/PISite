@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -70,6 +71,31 @@ namespace PIApp_Lib
         public bool onlyData = false;
 
         #endregion Fields
+
+        public void Send(HttpListenerResponse response,StreamWriter writer)
+        {
+            response.StatusCode = status;
+            response.ContentType = "application/json";
+
+            var s = "";
+
+            if (onlyData)
+            {
+                if (data.GetType() == typeof(string))
+                {
+                    s = data.ToString();
+                    response.ContentType = "text/plain";
+                }
+                else
+                    s = Jil.JSON.SerializeDynamic(data, Jil.Options.IncludeInherited);
+            }
+            else
+            {
+                s = Jil.JSON.SerializeDynamic(new {data = data, message = message, status = status}, Jil.Options.IncludeInherited);
+            }
+
+            writer.Write(s);
+        }
     }
 
     public class Route

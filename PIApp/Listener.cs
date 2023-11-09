@@ -39,16 +39,9 @@ namespace PIApp_Lib
 
             if (RequestRegistrar.Find(route, out var requestFunc))
             {
-
                 var res = await requestFunc.callback(new RequestContext(context));
 
-                context.Response.StatusCode = res.status;
-
-                var d = res.onlyData ? res.data : res;
-
-                var s = d.GetType() == typeof(string) ? d.ToString() : Jil.JSON.SerializeDynamic(d, Jil.Options.IncludeInherited);
-
-                writer.Write(s);
+                res.Send(context.Response, writer);
             }
             else if (FileServer.Find(route, context, writer))
             {
