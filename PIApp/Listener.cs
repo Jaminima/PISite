@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Runtime;
+using System.Threading;
 
 namespace PIApp_Lib
 {
@@ -15,12 +16,16 @@ namespace PIApp_Lib
 
         public static List<Action<HttpListenerContext>> middlewares = new List<Action<HttpListenerContext>>();
 
+        public static Action<HttpListenerContext,long> log;
+
         #endregion Fields
 
         #region Methods
 
         private static async void ReqBegin(IAsyncResult result)
         {
+            var stopwatch = Stopwatch.StartNew();
+
             var context = _listener.EndGetContext(result);
             _listener.BeginGetContext(ReqBegin, null);
 
@@ -60,6 +65,12 @@ namespace PIApp_Lib
             {
                 Console.WriteLine($"Req To {route.path} Failed");
             }
+
+            stopwatch.Stop();
+            var ms = stopwatch.ElapsedMilliseconds;
+
+            if (log != null)
+                log(context, ms);
         }
 
         public static void Init(int port = 8080)
