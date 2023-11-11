@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Concurrent;
+using System.IO;
 using System.Linq;
 using System.Net;
 
@@ -9,6 +10,8 @@ namespace PIApp_Lib
         #region Fields
 
         public static string filePath = "./site";
+
+        private static ConcurrentDictionary<string, string> cachedFiles = new ConcurrentDictionary<string, string>();
 
         #endregion Fields
 
@@ -25,19 +28,26 @@ namespace PIApp_Lib
 
             string fileSrc = filePath + "/" + trimmed_file;
 
-            if (File.Exists(fileSrc))
+            if (cachedFiles.TryGetValue(trimmed_file, out var content))
+            {
+                writer.Write(content);
+            }
+            else if (File.Exists(fileSrc))
             {
                 context.Response.StatusCode = 200;
                 context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc.Split('/').Last());
 
                 using (var fs = new FileStream(fileSrc, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
+                    var s = new StreamReader(fs).ReadToEnd();
+
+                    cachedFiles.TryAdd(trimmed_file, s);
+
+                    fs.Position = 0;
                     fs.CopyTo(writer.BaseStream);
                     fs.Flush();
                     fs.Close();
                 }
-
-                //Console.WriteLine($"Returned File {fileSrc}");
                 return true;
             }
             return false;
