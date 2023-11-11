@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace PIApp_Lib
 {
@@ -16,14 +17,18 @@ namespace PIApp_Lib
 
         #endregion Fields
 
+        public class FileFindResponse
+        {
+            public bool found;
+            public bool hitCache;
+        }
+
         #region Methods
 
-        public static bool Find(Route route, HttpListenerContext context, StreamWriter writer, out bool hitCache)
+        public static async Task<FileFindResponse> Find(Route route, HttpListenerContext context, StreamWriter writer)
         {
-            hitCache = false;
-
             if (route.method != "GET")
-                return false;
+                return new FileFindResponse() { found = false, hitCache = false };
 
             string trimmed_file = route.path.TrimStart('/');
 
@@ -36,9 +41,9 @@ namespace PIApp_Lib
                 context.Response.StatusCode = 200;
                 context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc.Split('/').Last());
 
-                writer.BaseStream.Write(content, 0, content.Length);
-                hitCache = true;
-                return true;
+                await writer.BaseStream.WriteAsync(content, 0, content.Length);
+
+                return new FileFindResponse() { found = true, hitCache = true };
             }
             else if (File.Exists(fileSrc))
             {
@@ -49,17 +54,17 @@ namespace PIApp_Lib
                 {
                     var bytes = new byte[fs.Length];
 
-                    fs.Read(bytes, 0, (int)fs.Length);
+                    await fs.ReadAsync(bytes, 0, (int)fs.Length);
 
                     fs.Close();
 
-                    writer.BaseStream.Write(bytes, 0, bytes.Length);
+                    await writer.BaseStream.WriteAsync(bytes, 0, bytes.Length);
 
                     cachedFiles.TryAdd(trimmed_file, bytes);
                 }
-                return true;
+                return new FileFindResponse() { found = true, hitCache = false };
             }
-            return false;
+            return new FileFindResponse() { found = false, hitCache = false };
         }
 
         #endregion Methods

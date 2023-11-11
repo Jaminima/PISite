@@ -72,7 +72,7 @@ namespace PIApp_Lib
 
         #endregion Fields
 
-        public void Send(HttpListenerResponse response,StreamWriter writer)
+        public async void Send(HttpListenerResponse response,StreamWriter writer)
         {
             response.StatusCode = status;
             response.ContentType = "application/json";
@@ -94,7 +94,7 @@ namespace PIApp_Lib
                 s = Jil.JSON.SerializeDynamic(new {data = data, message = message, status = status}, Jil.Options.IncludeInherited);
             }
 
-            writer.Write(s);
+            await writer.WriteAsync(s);
         }
     }
 

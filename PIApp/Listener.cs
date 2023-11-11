@@ -6,6 +6,7 @@ using System.Net;
 using System.Runtime;
 using System.Runtime.Remoting.Contexts;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace PIApp_Lib
 {
@@ -23,7 +24,7 @@ namespace PIApp_Lib
 
         #region Methods
 
-        private static async void FinishReq(HttpListenerContext context)
+        private static async Task FinishReq(HttpListenerContext context)
         {
             var stopwatch = Stopwatch.StartNew();
 
@@ -40,19 +41,23 @@ namespace PIApp_Lib
 
                 res.Send(context.Response, writer);
             }
-            else if (FileServer.Find(route, context, writer, out hitCache))
-            {
-            }
             else
             {
-                context.Response.StatusCode = 404;
+                var findFile = await FileServer.Find(route, context, writer);
 
-                writer.Write(Jil.JSON.Serialize(new { message = "404 - Unable To Locate Path" }));
+                hitCache = findFile.hitCache;
+
+                if (!findFile.found)
+                {
+                    context.Response.StatusCode = 404;
+
+                    await writer.WriteAsync(Jil.JSON.Serialize(new { message = "404 - Unable To Locate Path" }));
+                }
             }
 
             try
             {
-                writer.Flush();
+                await writer.FlushAsync();
                 writer.Close();
             }
             catch
@@ -74,7 +79,7 @@ namespace PIApp_Lib
 
             try
             {
-                FinishReq(context);
+                await FinishReq(context);
             }
             catch (Exception ex)
             {
