@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Runtime;
+using System.Runtime.Remoting.Contexts;
 using System.Threading;
 
 namespace PIApp_Lib
@@ -16,26 +17,22 @@ namespace PIApp_Lib
 
         public static List<Action<HttpListenerContext>> middlewares = new List<Action<HttpListenerContext>>();
 
-        public static Action<HttpListenerContext,long> log;
+        public static Action<HttpListenerContext,long, bool> log;
 
         #endregion Fields
 
         #region Methods
 
-        private static async void ReqBegin(IAsyncResult result)
+        private static async void FinishReq(HttpListenerContext context)
         {
             var stopwatch = Stopwatch.StartNew();
 
-            var context = _listener.EndGetContext(result);
-            _listener.BeginGetContext(ReqBegin, null);
-
-            //Console.WriteLine($"Request Received: {context.Request.HttpMethod} - {context.Request.RawUrl}");
-
             middlewares.ForEach(x => x(context));
-
             var route = new Route() { path = context.Request.RawUrl, method = context.Request.HttpMethod };
 
             var writer = new StreamWriter(context.Response.OutputStream);
+
+            bool hitCache = false;
 
             if (RequestRegistrar.Find(route, out var requestFunc))
             {
@@ -43,7 +40,7 @@ namespace PIApp_Lib
 
                 res.Send(context.Response, writer);
             }
-            else if (FileServer.Find(route, context, writer))
+            else if (FileServer.Find(route, context, writer, out hitCache))
             {
             }
             else
@@ -67,7 +64,22 @@ namespace PIApp_Lib
             var ms = stopwatch.ElapsedMilliseconds;
 
             if (log != null)
-                log(context, ms);
+                log(context, ms, hitCache);
+        }
+
+        private static async void ReqBegin(IAsyncResult result)
+        {
+            var context = _listener.EndGetContext(result);
+            _listener.BeginGetContext(ReqBegin, null);
+
+            try
+            {
+                FinishReq(context);
+            }
+            catch (Exception ex)
+            {
+
+            }
         }
 
         public static void Init(int port = 8080)
