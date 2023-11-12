@@ -38,7 +38,18 @@ namespace PIApp_Lib
 
             if (RequestRegistrar.Find(route, out var requestFunc))
             {
-                var res = await requestFunc.callback(reqContext);
+                ResponseState res;
+
+                if (RequestCache.Hit(requestFunc, out var cachedItem))
+                {
+                    res = cachedItem.response;
+                    hitCache = true;
+                }
+                else
+                {
+                    res = await requestFunc.callback(reqContext);
+                    RequestCache.Store(requestFunc, res);
+                }
 
                 res.Send(reqContext);
             }

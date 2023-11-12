@@ -64,6 +64,7 @@
     <Compile Include="Listener.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestCache.cs" />
     <Compile Include="RequestContext.cs" />
     <Compile Include="RequestRegistrar.cs" />
     <Compile Include="ResponseState.cs" />
