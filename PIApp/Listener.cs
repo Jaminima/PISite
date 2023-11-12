@@ -6,7 +6,7 @@ using System.Net;
 using System.Runtime;
 using System.Runtime.Remoting.Contexts;
 using System.Threading;
-using System.Threading.Tasks;
+using ReusableTasks;
 
 namespace PIApp_Lib
 {
@@ -26,7 +26,7 @@ namespace PIApp_Lib
 
         #region Methods
 
-        private static async Task FinishReq(HttpListenerContext context)
+        private static async ReusableTask FinishReq(HttpListenerContext context)
         {
             var stopwatch = Stopwatch.StartNew();
 
@@ -81,7 +81,7 @@ namespace PIApp_Lib
 
             _listener = new HttpListener();
 
-            if (Debugger.IsAttached)
+            if (Debugger.IsAttached || true)
                 _listener.Prefixes.Add($"http://localhost:{port}/");
             else
                 _listener.Prefixes.Add($"http://+:{port}/");

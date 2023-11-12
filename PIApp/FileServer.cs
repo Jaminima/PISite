@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
+using ReusableTasks;
 
 namespace PIApp_Lib
 {
@@ -25,7 +25,7 @@ namespace PIApp_Lib
 
         #region Methods
 
-        public static async Task<FileFindResponse> Find(Route route, RequestContext context)
+        public static async ReusableTask<FileFindResponse> Find(Route route, RequestContext context)
         {
             if (route.method != "GET")
                 return new FileFindResponse() { found = false, hitCache = false };
