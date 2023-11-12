@@ -25,7 +25,7 @@ namespace PIApp_Lib
 
         #region Methods
 
-        public static async Task<FileFindResponse> Find(Route route, HttpListenerContext context, StreamWriter writer)
+        public static async Task<FileFindResponse> Find(Route route, RequestContext context)
         {
             if (route.method != "GET")
                 return new FileFindResponse() { found = false, hitCache = false };
@@ -38,17 +38,17 @@ namespace PIApp_Lib
 
             if (cachedFiles.TryGetValue(trimmed_file, out var content))
             {
-                context.Response.StatusCode = 200;
-                context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc.Split('/').Last());
+                context.context.Response.StatusCode = 200;
+                context.context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc.Split('/').Last());
 
-                await writer.BaseStream.WriteAsync(content, 0, content.Length);
+                await context.SafeWrite(async x=>await x.BaseStream.WriteAsync(content, 0, content.Length));
 
                 return new FileFindResponse() { found = true, hitCache = true };
             }
             else if (File.Exists(fileSrc))
             {
-                context.Response.StatusCode = 200;
-                context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc.Split('/').Last());
+                context.context.Response.StatusCode = 200;
+                context.context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc.Split('/').Last());
 
                 using (var fs = new FileStream(fileSrc, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
@@ -58,7 +58,7 @@ namespace PIApp_Lib
 
                     fs.Close();
 
-                    await writer.BaseStream.WriteAsync(bytes, 0, bytes.Length);
+                    await context.SafeWrite(async x => await x.BaseStream.WriteAsync(bytes, 0, bytes.Length));
 
                     cachedFiles.TryAdd(trimmed_file, bytes);
                 }

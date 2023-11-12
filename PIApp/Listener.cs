@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 
 namespace PIApp_Lib
 {
+
+
     public static class Listener
     {
         #region Fields
@@ -30,20 +32,19 @@ namespace PIApp_Lib
 
             middlewares.ForEach(x => x(context));
             var route = new Route() { path = context.Request.RawUrl, method = context.Request.HttpMethod };
-
-            var writer = new StreamWriter(context.Response.OutputStream);
+            var reqContext = new RequestContext(context);
 
             bool hitCache = false;
 
             if (RequestRegistrar.Find(route, out var requestFunc))
             {
-                var res = await requestFunc.callback(new RequestContext(context));
+                var res = await requestFunc.callback(reqContext);
 
-                res.Send(context.Response, writer);
+                res.Send(reqContext);
             }
             else
             {
-                var findFile = await FileServer.Find(route, context, writer);
+                var findFile = await FileServer.Find(route, reqContext);
 
                 hitCache = findFile.hitCache;
 
@@ -51,19 +52,13 @@ namespace PIApp_Lib
                 {
                     context.Response.StatusCode = 404;
 
-                    await writer.WriteAsync(Jil.JSON.Serialize(new { message = "404 - Unable To Locate Path" }));
+                    var s = Jil.JSON.Serialize(new { message = "404 - Unable To Locate Path" });
+
+                    await reqContext.SafeWrite(async x => await x.WriteAsync(s));
                 }
             }
 
-            try
-            {
-                await writer.FlushAsync();
-                writer.Close();
-            }
-            catch
-            {
-                Console.WriteLine($"Req To {route.path} Failed");
-            }
+            reqContext.SafeFlushClose();
 
             stopwatch.Stop();
             var ms = stopwatch.ElapsedMilliseconds;

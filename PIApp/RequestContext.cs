@@ -12,9 +12,39 @@ namespace PIApp_Lib
     {
         public HttpListenerContext context;
 
+        private StreamWriter outputStream;
+
         public RequestContext(HttpListenerContext context) 
         { 
             this.context = context;
+            this.outputStream = new StreamWriter(context.Response.OutputStream);
+            this.outputStream.AutoFlush = true;
+        }
+
+        public async Task<bool> SafeWrite(Func<StreamWriter, Task> writeFunc)
+        {
+            try
+            {
+                await writeFunc(this.outputStream);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public bool SafeFlushClose() {
+            try
+            {
+                this.outputStream.Flush();
+                this.outputStream.Close();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
         public string GetBody()
