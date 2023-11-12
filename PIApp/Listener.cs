@@ -72,14 +72,7 @@ namespace PIApp_Lib
             var context = _listener.EndGetContext(result);
             _listener.BeginGetContext(ReqBegin, null);
 
-            try
-            {
-                await FinishReq(context);
-            }
-            catch (Exception ex)
-            {
-
-            }
+            await FinishReq(context);
         }
 
         public static void Init(int port = 8080)

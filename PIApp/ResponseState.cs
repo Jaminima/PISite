@@ -37,7 +37,7 @@ namespace PIApp_Lib
                 s = Jil.JSON.SerializeDynamic(new {data = data, message = message, status = status}, Jil.Options.IncludeInherited);
             }
 
-            context.SafeWrite(async x=>await x.WriteAsync(s));
+            await context.SafeWrite(async x=>await x.WriteAsync(s));
         }
     }
 }
