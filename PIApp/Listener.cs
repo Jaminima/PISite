@@ -6,7 +6,7 @@ using System.Net;
 using System.Runtime;
 using System.Runtime.Remoting.Contexts;
 using System.Threading;
-using ReusableTasks;
+using System.Threading.Tasks;
 
 namespace PIApp_Lib
 {
@@ -26,7 +26,7 @@ namespace PIApp_Lib
 
         #region Methods
 
-        private static async ReusableTask FinishReq(HttpListenerContext context)
+        private static async Task FinishReq(HttpListenerContext context)
         {
             var stopwatch = Stopwatch.StartNew();
 

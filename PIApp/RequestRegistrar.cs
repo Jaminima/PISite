@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using ReusableTasks;
+using System.Threading.Tasks;
 
 namespace PIApp_Lib
 {
@@ -38,7 +38,7 @@ namespace PIApp_Lib
     {
         #region Fields
 
-        public Func<RequestContext, ReusableTask<ResponseState>> callback;
+        public Func<RequestContext, Task<ResponseState>> callback;
         public Route route;
         public TimeSpan cacheFor = TimeSpan.Zero;
 
@@ -46,26 +46,26 @@ namespace PIApp_Lib
 
         #region Constructors
 
-        public RequestFunc(Route route, Func<RequestContext, ReusableTask<ResponseState>> callback)
+        public RequestFunc(Route route, Func<RequestContext, Task<ResponseState>> callback)
         {
             this.callback = callback;
             this.route = route;
         }
 
-        public RequestFunc(Route route, Func<RequestContext, ReusableTask<ResponseState>> callback, TimeSpan cacheFor)
+        public RequestFunc(Route route, Func<RequestContext, Task<ResponseState>> callback, TimeSpan cacheFor)
         {
             this.callback = callback;
             this.route = route;
             this.cacheFor = cacheFor;
         }
 
-        public RequestFunc(string path, string method, Func<RequestContext, ReusableTask<ResponseState>> callback)
+        public RequestFunc(string path, string method, Func<RequestContext, Task<ResponseState>> callback)
         {
             this.callback = callback;
             this.route = new Route() { method = method, path = path };
         }
 
-        public RequestFunc(string path, string method, Func<RequestContext, ReusableTask<ResponseState>> callback, TimeSpan cacheFor)
+        public RequestFunc(string path, string method, Func<RequestContext, Task<ResponseState>> callback, TimeSpan cacheFor)
         {
             this.callback = callback;
             this.route = new Route() { method = method, path = path };

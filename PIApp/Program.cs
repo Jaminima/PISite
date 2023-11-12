@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Net;
-using ReusableTasks;
+using System.Threading.Tasks;
 
 namespace PIApp_Lib
 {
@@ -9,7 +9,7 @@ namespace PIApp_Lib
     {
         #region Methods
 
-        private static async ReusableTask<ResponseState> A(RequestContext context)
+        private static async Task<ResponseState> A(RequestContext context)
         {
             Console.WriteLine("A");
             return new ResponseState()

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using ReusableTasks;
+using System.Threading.Tasks;
 
 namespace PIApp_Lib
 {
@@ -21,7 +21,7 @@ namespace PIApp_Lib
             this.outputStream.AutoFlush = true;
         }
 
-        public async ReusableTask<bool> SafeWrite(Func<StreamWriter, ReusableTask> writeFunc)
+        public async Task<bool> SafeWrite(Func<StreamWriter, Task> writeFunc)
         {
             try
             {
@@ -30,6 +30,7 @@ namespace PIApp_Lib
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return false;
             }
         }
