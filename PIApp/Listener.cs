@@ -55,6 +55,10 @@ namespace PIApp_Lib
             }
             else
             {
+                var expires = (DateTime.UtcNow + new TimeSpan(1, 0, 0)).ToString("dddd, dd MMM yyyy HH:mm:ss") + " GMT";
+
+                context.Response.Headers.Add("Expires", expires);
+
                 var findFile = await FileServer.Find(route, reqContext);
 
                 hitCache = findFile.hitCache;
