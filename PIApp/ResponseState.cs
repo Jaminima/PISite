@@ -19,6 +19,7 @@ namespace PIApp_Lib
 
             response.StatusCode = status;
             response.ContentType = "application/json";
+            response.SendChunked = false;
 
             var s = "";
 
@@ -36,6 +37,8 @@ namespace PIApp_Lib
             {
                 s = Jil.JSON.SerializeDynamic(new {data = data, message = message, status = status}, Jil.Options.IncludeInherited);
             }
+
+            response.ContentLength64 = s.Length;
 
             await context.SafeWrite(async x=>await x.WriteAsync(s));
         }

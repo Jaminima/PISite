@@ -18,7 +18,6 @@ namespace PIApp_Lib
         { 
             this.context = context;
             this.outputStream = new StreamWriter(context.Response.OutputStream);
-            this.outputStream.AutoFlush = true;
         }
 
         public async Task<bool> SafeWrite(Func<StreamWriter, Task> writeFunc)
