@@ -19,17 +19,28 @@ namespace PIApp_Lib
             this.context = context;
             this.outputStream = new StreamWriter(context.Response.OutputStream);
         }
+        public bool SafeWriteObject(object data)
+        {
+            var s = Jil.JSON.SerializeDynamic(data, Jil.Options.IncludeInherited);
 
-        public async Task<bool> SafeWrite(Func<StreamWriter, Task> writeFunc)
+            return SafeWriteString(s);
+        }
+
+        public bool SafeWriteString(string str)
+        {
+            return SafeWrite(x=>outputStream.WriteAsync(str));
+        }
+
+        public bool SafeWrite(Func<StreamWriter, Task> writeFunc)
         {
             try
             {
-                await writeFunc(this.outputStream);
+                var t = writeFunc(this.outputStream);
+                t.Wait();
                 return true;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
                 return false;
             }
         }
@@ -43,6 +54,7 @@ namespace PIApp_Lib
             }
             catch (Exception ex)
             {
+                Console.WriteLine(ex.ToString());
                 return false;
             }
         }

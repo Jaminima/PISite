@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 
 namespace PIApp_Lib
 {
@@ -13,13 +14,12 @@ namespace PIApp_Lib
 
         #endregion Fields
 
-        public async void Send(RequestContext context)
+        public void Send(RequestContext context)
         {
             var response = context.context.Response;
 
             response.StatusCode = status;
             response.ContentType = "application/json";
-            response.SendChunked = false;
 
             var s = "";
 
@@ -31,16 +31,14 @@ namespace PIApp_Lib
                     response.ContentType = "text/plain";
                 }
                 else
-                    s = Jil.JSON.SerializeDynamic(data, Jil.Options.IncludeInherited);
+                    context.SafeWriteObject(data);
             }
             else
             {
-                s = Jil.JSON.SerializeDynamic(new {data = data, message = message, status = status}, Jil.Options.IncludeInherited);
+                context.SafeWriteObject(new { data = data, message = message, status = status });
             }
 
-            response.ContentLength64 = s.Length;
-
-            await context.SafeWrite(async x=>await x.WriteAsync(s));
+            //response.ContentLength64 = s.Length;
         }
     }
 }

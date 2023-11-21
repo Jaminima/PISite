@@ -52,7 +52,7 @@ namespace PIApp_Lib
                 context.context.Response.StatusCode = 200;
                 context.context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc.Split('/').Last());
 
-                await context.SafeWrite(async x=>await x.BaseStream.WriteAsync(content, 0, content.Length));
+                context.SafeWrite(x=>x.BaseStream.WriteAsync(content, 0, content.Length));
 
                 return new FileFindResponse() { found = true, hitCache = true };
             }
@@ -69,7 +69,7 @@ namespace PIApp_Lib
 
                     fs.Close();
 
-                    await context.SafeWrite(async x => await x.BaseStream.WriteAsync(bytes, 0, bytes.Length));
+                    context.SafeWrite(x => x.BaseStream.WriteAsync(bytes, 0, bytes.Length));
 
                     cachedFiles.TryAdd(trimmed_file, bytes);
                 }

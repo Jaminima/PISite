@@ -40,7 +40,7 @@ namespace PIApp_Lib
             {
                 if (context.Request.HttpMethod == "HEAD")
                 {
-                    await reqContext.SafeWrite(async x => await x.WriteAsync(""));
+                    reqContext.SafeWriteString("");
                 }
                 else
                 {
@@ -76,15 +76,13 @@ namespace PIApp_Lib
                             break;
 
                         case "HEAD":
-                            await reqContext.SafeWrite(async x => await x.WriteAsync(""));
+                            reqContext.SafeWriteString("");
                             break;
 
                         default:
                             context.Response.StatusCode = 405;
 
-                            var s = Jil.JSON.Serialize(new { message = "405 - Illegal Method" });
-
-                            await reqContext.SafeWrite(async x => await x.WriteAsync(s));
+                            reqContext.SafeWriteObject(new { message = "405 - Illegal Method" });
 
                             break;
                     }
@@ -93,9 +91,7 @@ namespace PIApp_Lib
                 {
                     context.Response.StatusCode = 404;
 
-                    var s = Jil.JSON.Serialize(new { message = "404 - Unable To Locate Path" });
-
-                    await reqContext.SafeWrite(async x => await x.WriteAsync(s));
+                    reqContext.SafeWriteObject(new { message = "404 - Unable To Locate Path" });
                 }
             }
 
