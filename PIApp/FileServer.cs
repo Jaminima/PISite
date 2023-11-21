@@ -25,6 +25,17 @@ namespace PIApp_Lib
 
         #region Methods
 
+        public static bool FileExists(Route route)
+        {
+            string trimmed_file = route.path.TrimStart('/');
+
+            trimmed_file = trimmed_file.Length == 0 ? "index.html" : trimmed_file;
+
+            string fileSrc = filePath + "/" + trimmed_file;
+
+            return cachedFiles.ContainsKey(fileSrc) || File.Exists(fileSrc);
+        }
+
         public static async Task<FileFindResponse> Find(Route route, RequestContext context)
         {
             if (route.method != "GET")

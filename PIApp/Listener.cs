@@ -38,20 +38,27 @@ namespace PIApp_Lib
 
             if (RequestRegistrar.Find(route, out var requestFunc))
             {
-                ResponseState res;
-
-                if (RequestCache.Hit(requestFunc, out var cachedItem))
+                if (context.Request.HttpMethod == "HEAD")
                 {
-                    res = cachedItem.response;
-                    hitCache = true;
+                    await reqContext.SafeWrite(async x => await x.WriteAsync(""));
                 }
                 else
                 {
-                    res = await requestFunc.callback(reqContext);
-                    RequestCache.Store(requestFunc, res);
-                }
+                    ResponseState res;
 
-                res.Send(reqContext);
+                    if (RequestCache.Hit(requestFunc, out var cachedItem))
+                    {
+                        res = cachedItem.response;
+                        hitCache = true;
+                    }
+                    else
+                    {
+                        res = await requestFunc.callback(reqContext);
+                        RequestCache.Store(requestFunc, res);
+                    }
+
+                    res.Send(reqContext);
+                }
             }
             else
             {
@@ -59,11 +66,30 @@ namespace PIApp_Lib
 
                 context.Response.Headers.Add("Expires", expires);
 
-                var findFile = await FileServer.Find(route, reqContext);
+                if (FileServer.FileExists(route))
+                {
+                    switch (context.Request.HttpMethod)
+                    {
+                        case "GET":
+                            var findFile = await FileServer.Find(route, reqContext);
+                            hitCache = findFile.hitCache;
+                            break;
 
-                hitCache = findFile.hitCache;
+                        case "HEAD":
+                            await reqContext.SafeWrite(async x => await x.WriteAsync(""));
+                            break;
 
-                if (!findFile.found)
+                        default:
+                            context.Response.StatusCode = 405;
+
+                            var s = Jil.JSON.Serialize(new { message = "405 - Illegal Method" });
+
+                            await reqContext.SafeWrite(async x => await x.WriteAsync(s));
+
+                            break;
+                    }
+                }
+                else
                 {
                     context.Response.StatusCode = 404;
 

@@ -13,7 +13,7 @@
 
         public bool RouteMatch(Route enemy)
         {
-            return path == enemy.path && method == enemy.method;
+            return path == enemy.path && (method == enemy.method || enemy.method == "HEAD");
         }
 
         #endregion Methods
