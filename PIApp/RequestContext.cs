@@ -69,5 +69,12 @@ namespace PIApp_Lib
             s.Close();
             return str;
         }
+
+        public T GetBody<T>()
+        {
+            var s = GetBody();
+
+            return Jil.JSON.Deserialize<T>(s, Jil.Options.IncludeInherited);
+        }
     }
 }

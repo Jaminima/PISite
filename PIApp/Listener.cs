@@ -36,7 +36,16 @@ namespace PIApp_Lib
 
             bool hitCache = false;
 
-            if (RequestRegistrar.Find(route, out var requestFunc))
+            context.Response.Headers.Add("Access-Control-Allow-Methods", "OPTIONS, GET, HEAD, POST");
+            context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
+            context.Response.Headers.Add("Access-Control-Allow-Headers", "*");
+
+            if (route.method == "OPTIONS")
+            {
+                reqContext.SafeWriteString("");
+            }
+            else if (RequestRegistrar.Find(route, out var requestFunc))
             {
                 if (context.Request.HttpMethod == "HEAD")
                 {
