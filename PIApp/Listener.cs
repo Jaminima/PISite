@@ -98,9 +98,8 @@ namespace PIApp_Lib
                 }
                 else
                 {
-                    context.Response.StatusCode = 404;
-
-                    reqContext.SafeWriteObject(new { message = "404 - Unable To Locate Path" });
+                    var findFile = await FileServer.Find(new Route() { method="GET", path=""}, reqContext);
+                    hitCache = findFile.hitCache;
                 }
             }
 
