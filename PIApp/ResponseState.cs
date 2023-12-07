@@ -27,8 +27,8 @@ namespace PIApp_Lib
             {
                 if (data.GetType() == typeof(string))
                 {
-                    s = data.ToString();
                     response.ContentType = "text/plain";
+                    context.SafeWriteString(data.ToString());
                 }
                 else
                     context.SafeWriteObject(data);
