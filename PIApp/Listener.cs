@@ -98,6 +98,7 @@ namespace PIApp_Lib
                 }
                 else
                 {
+                    context.Response.StatusCode = 404;
                     var findFile = await FileServer.Find(new Route() { method="GET", path=""}, reqContext);
                     hitCache = findFile.hitCache;
                 }
