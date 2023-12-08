@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace PIApp_Lib
@@ -25,7 +26,7 @@ namespace PIApp_Lib
 
         #region Methods
 
-        public static bool FileExists(Route route)
+        public static bool FileExists(Route route, out bool isGz)
         {
             string trimmed_file = route.path.TrimStart('/');
 
@@ -33,10 +34,12 @@ namespace PIApp_Lib
 
             string fileSrc = filePath + "/" + trimmed_file;
 
+            isGz = cachedFiles.ContainsKey(fileSrc + ".gz") || File.Exists(fileSrc + ".gz");
+
             return cachedFiles.ContainsKey(fileSrc) || File.Exists(fileSrc);
         }
 
-        public static async Task<FileFindResponse> Find(Route route, RequestContext context)
+        public static async Task<FileFindResponse> Find(Route route, RequestContext context, bool isGz)
         {
             if (route.method != "GET")
                 return new FileFindResponse() { found = false, hitCache = false };
@@ -46,11 +49,17 @@ namespace PIApp_Lib
             trimmed_file = trimmed_file.Length == 0 ? "index.html" : trimmed_file;
 
             string fileSrc = filePath + "/" + trimmed_file;
+            string fileSrcNoGz = fileSrc;
+
+            if (isGz)
+                fileSrc += ".gz";
 
             if (cachedFiles.TryGetValue(trimmed_file, out var content))
             {
                 context.context.Response.StatusCode = 200;
-                context.context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc.Split('/').Last());
+                context.context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrcNoGz.Split('/').Last());
+                if (isGz)
+                    context.context.Response.AddHeader("Content-Encoding", "gzip");
 
                 context.SafeWrite(x=>x.BaseStream.WriteAsync(content, 0, content.Length));
 
@@ -59,7 +68,9 @@ namespace PIApp_Lib
             else if (File.Exists(fileSrc))
             {
                 context.context.Response.StatusCode = 200;
-                context.context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrc.Split('/').Last());
+                context.context.Response.ContentType = MimeTypes.MimeTypeMap.GetMimeType(fileSrcNoGz.Split('/').Last());
+                if (isGz)
+                    context.context.Response.AddHeader("Content-Encoding", "gzip");
 
                 using (var fs = new FileStream(fileSrc, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {

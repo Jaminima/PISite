@@ -40,6 +40,7 @@ namespace PIApp_Lib
             context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
             context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
             context.Response.Headers.Add("Access-Control-Allow-Headers", "*");
+            context.Response.Headers["Server"] = "PISite - ";
 
             if (route.method == "OPTIONS")
             {
@@ -75,12 +76,12 @@ namespace PIApp_Lib
 
                 context.Response.Headers.Add("Expires", expires);
 
-                if (FileServer.FileExists(route))
+                if (FileServer.FileExists(route, out var isGz))
                 {
                     switch (context.Request.HttpMethod)
                     {
                         case "GET":
-                            var findFile = await FileServer.Find(route, reqContext);
+                            var findFile = await FileServer.Find(route, reqContext, isGz);
                             hitCache = findFile.hitCache;
                             break;
 
@@ -99,7 +100,7 @@ namespace PIApp_Lib
                 else
                 {
                     context.Response.StatusCode = 404;
-                    var findFile = await FileServer.Find(new Route() { method="GET", path=""}, reqContext);
+                    var findFile = await FileServer.Find(new Route() { method="GET", path=""}, reqContext, true);
                     hitCache = findFile.hitCache;
                 }
             }
