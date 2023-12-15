@@ -62,7 +62,6 @@
   <ItemGroup>
     <Compile Include="FileServer.cs" />
     <Compile Include="Listener.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestCache.cs" />
     <Compile Include="RequestContext.cs" />
