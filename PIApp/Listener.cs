@@ -31,7 +31,7 @@ namespace PIApp_Lib
             var stopwatch = Stopwatch.StartNew();
 
             middlewares.ForEach(x => x(context));
-            var route = new Route() { path = context.Request.RawUrl, method = context.Request.HttpMethod };
+            var route = new Route() { path = context.Request.Url.AbsolutePath, method = context.Request.HttpMethod };
             var reqContext = new RequestContext(context);
 
             bool hitCache = false;
