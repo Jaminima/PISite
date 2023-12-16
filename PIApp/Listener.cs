@@ -36,7 +36,7 @@ namespace PIApp_Lib
 
             bool hitCache = false;
 
-            context.Response.Headers.Add("Access-Control-Allow-Methods", "OPTIONS, GET, HEAD, POST");
+            context.Response.Headers.Add("Access-Control-Allow-Methods", "OPTIONS, GET, HEAD, DELETE, POST");
             context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
             context.Response.Headers.Add("Access-Control-Allow-Credentials", "true");
             context.Response.Headers.Add("Access-Control-Allow-Headers", "*");
