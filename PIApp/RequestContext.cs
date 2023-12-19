@@ -74,7 +74,14 @@ namespace PIApp_Lib
         {
             var s = GetBody();
 
-            return Jil.JSON.Deserialize<T>(s, Jil.Options.IncludeInherited);
+            try
+            {
+                return Jil.JSON.Deserialize<T>(s, Jil.Options.IncludeInherited);
+            }
+            catch
+            {
+                return default(T);
+            }
         }
     }
 }
