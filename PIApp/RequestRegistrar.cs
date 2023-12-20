@@ -62,13 +62,13 @@ namespace PIApp_Lib
         public RequestFunc(string path, string method, Func<RequestContext, Task<ResponseState>> callback)
         {
             this.callback = callback;
-            this.route = new Route() { method = method, path = path };
+            this.route = new Route(method, path, "") { method = method, path = path };
         }
 
         public RequestFunc(string path, string method, Func<RequestContext, Task<ResponseState>> callback, TimeSpan cacheFor)
         {
             this.callback = callback;
-            this.route = new Route() { method = method, path = path };
+            this.route = new Route(method, path, "") { method = method, path = path };
             this.cacheFor = cacheFor;
         }
 
@@ -76,7 +76,7 @@ namespace PIApp_Lib
 
         public string GetKey()
         {
-            return $"{this.route.path}-{this.route.method}";
+            return $"{this.route.path}-{this.route.method}-{this.route.prams}";
         }
     }
 }

@@ -31,8 +31,8 @@ namespace PIApp_Lib
             var stopwatch = Stopwatch.StartNew();
 
             middlewares.ForEach(x => x(context));
-            var route = new Route() { path = context.Request.Url.AbsolutePath, method = context.Request.HttpMethod };
             var reqContext = new RequestContext(context);
+            var route = new Route(reqContext);
 
             bool hitCache = false;
 
@@ -100,7 +100,7 @@ namespace PIApp_Lib
                 else
                 {
                     context.Response.StatusCode = 404;
-                    var findFile = await FileServer.Find(new Route() { method="GET", path=""}, reqContext, true);
+                    var findFile = await FileServer.Find(new Route("GET", "", ""), reqContext, true);
                     hitCache = findFile.hitCache;
                 }
             }
