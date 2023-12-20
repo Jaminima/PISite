@@ -42,8 +42,11 @@ namespace PIApp_Lib
             return true;
         }
 
-        public static void Store(RequestFunc requestFunc, ResponseState responseState)
+        public static void Store(RequestFunc requestFunc, ResponseState responseState, Route route = null)
         {
+            if (route != null)
+                requestFunc.route = route;
+
             if (cache.TryGetValue(requestFunc.GetKey(), out _))
             {
                 return;

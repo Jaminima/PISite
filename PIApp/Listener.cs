@@ -64,7 +64,7 @@ namespace PIApp_Lib
                     else
                     {
                         res = await requestFunc.callback(reqContext);
-                        RequestCache.Store(requestFunc, res);
+                        RequestCache.Store(requestFunc, res, route);
                     }
 
                     res.Send(reqContext);
