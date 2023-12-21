@@ -63,8 +63,20 @@ namespace PIApp_Lib
                     }
                     else
                     {
-                        res = await requestFunc.callback(reqContext);
-                        RequestCache.Store(requestFunc, res, route);
+                        try
+                        {
+                            res = await requestFunc.callback(reqContext);
+                            RequestCache.Store(requestFunc, res, route);
+                        }
+                        catch (Exception ex)
+                        {
+                            res = new ResponseState()
+                            {
+                                status = 500,
+                                message = "Something has gone awfully wrong",
+                                data = ex.ToString()
+                            };
+                        }
                     }
 
                     res.Send(reqContext);
