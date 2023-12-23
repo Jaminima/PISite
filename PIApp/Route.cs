@@ -10,6 +10,8 @@
 
         #endregion Fields
 
+        #region Constructors
+
         public Route(RequestContext context)
         {
             this.path = context.context.Request.Url.AbsolutePath;
@@ -24,7 +26,7 @@
             this.prams = prams;
         }
 
-
+        #endregion Constructors
 
         #region Methods
 

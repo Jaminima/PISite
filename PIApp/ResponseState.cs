@@ -1,7 +1,4 @@
-﻿using System.IO;
-using System.Text;
-
-namespace PIApp_Lib
+﻿namespace PIApp_Lib
 {
     public class ResponseState
     {
@@ -9,10 +6,12 @@ namespace PIApp_Lib
 
         public object data;
         public string message;
-        public int status = 200;
         public bool onlyData = false;
+        public int status = 200;
 
         #endregion Fields
+
+        #region Methods
 
         public void Send(RequestContext context)
         {
@@ -40,5 +39,7 @@ namespace PIApp_Lib
 
             //response.ContentLength64 = s.Length;
         }
+
+        #endregion Methods
     }
 }

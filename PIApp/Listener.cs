@@ -1,26 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Net;
-using System.Runtime;
-using System.Runtime.Remoting.Contexts;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace PIApp_Lib
 {
-
-
     public static class Listener
     {
         #region Fields
 
         private static HttpListener _listener;
-
-        public static List<Action<HttpListenerContext>> middlewares = new List<Action<HttpListenerContext>>();
-
-        public static Action<HttpListenerContext,long, bool> log;
 
         #endregion Fields
 
@@ -134,6 +124,11 @@ namespace PIApp_Lib
             await FinishReq(context);
         }
 
+        #endregion Methods
+
+        public static Action<HttpListenerContext, long, bool> log;
+        public static List<Action<HttpListenerContext>> middlewares = new List<Action<HttpListenerContext>>();
+
         public static void Init(int port = 8080)
         {
             Console.WriteLine($"Starting Up HTTP Server On {port}");
@@ -148,7 +143,5 @@ namespace PIApp_Lib
             _listener.Start();
             _listener.BeginGetContext(ReqBegin, null);
         }
-
-        #endregion Methods
     }
 }

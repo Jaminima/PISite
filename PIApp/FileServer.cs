@@ -1,9 +1,6 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PIApp_Lib
@@ -12,17 +9,10 @@ namespace PIApp_Lib
     {
         #region Fields
 
+        private static ConcurrentDictionary<string, byte[]> cachedFiles = new ConcurrentDictionary<string, byte[]>();
         public static string filePath = "./site";
 
-        private static ConcurrentDictionary<string, byte[]> cachedFiles = new ConcurrentDictionary<string, byte[]>();
-
         #endregion Fields
-
-        public class FileFindResponse
-        {
-            public bool found;
-            public bool hitCache;
-        }
 
         #region Methods
 
@@ -61,7 +51,7 @@ namespace PIApp_Lib
                 if (isGz)
                     context.context.Response.AddHeader("Content-Encoding", "gzip");
 
-                context.SafeWrite(x=>x.BaseStream.WriteAsync(content, 0, content.Length));
+                context.SafeWrite(x => x.BaseStream.WriteAsync(content, 0, content.Length));
 
                 return new FileFindResponse() { found = true, hitCache = true };
             }
@@ -90,5 +80,19 @@ namespace PIApp_Lib
         }
 
         #endregion Methods
+
+        #region Classes
+
+        public class FileFindResponse
+        {
+            #region Fields
+
+            public bool found;
+            public bool hitCache;
+
+            #endregion Fields
+        }
+
+        #endregion Classes
     }
 }

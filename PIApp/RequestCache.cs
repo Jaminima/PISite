@@ -1,32 +1,20 @@
-﻿using System.Threading.Tasks;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PIApp_Lib
 {
-    internal class CachedItem
-    {
-        public ResponseState response;
-        public RequestFunc requestFunc;
-        public DateTime cachedAt;
-
-        public CachedItem(ResponseState response, RequestFunc requestFunc)
-        {
-            this.response = response;
-            this.requestFunc = requestFunc;
-            this.cachedAt = DateTime.UtcNow;
-        }
-    }
-
     internal static class RequestCache
     {
+        #region Fields
+
         private static ConcurrentDictionary<string, CachedItem> cache = new ConcurrentDictionary<string, CachedItem>();
 
-        public static bool Hit(RequestFunc requestFunc, out CachedItem cachedItem) { 
+        #endregion Fields
+
+        #region Methods
+
+        public static bool Hit(RequestFunc requestFunc, out CachedItem cachedItem)
+        {
             var found = cache.TryGetValue(requestFunc.GetKey(), out cachedItem);
 
             if (!found)
@@ -54,5 +42,29 @@ namespace PIApp_Lib
 
             cache.TryAdd(requestFunc.GetKey(), new CachedItem(responseState, requestFunc));
         }
+
+        #endregion Methods
+    }
+
+    internal class CachedItem
+    {
+        #region Fields
+
+        public DateTime cachedAt;
+        public RequestFunc requestFunc;
+        public ResponseState response;
+
+        #endregion Fields
+
+        #region Constructors
+
+        public CachedItem(ResponseState response, RequestFunc requestFunc)
+        {
+            this.response = response;
+            this.requestFunc = requestFunc;
+            this.cachedAt = DateTime.UtcNow;
+        }
+
+        #endregion Constructors
     }
 }

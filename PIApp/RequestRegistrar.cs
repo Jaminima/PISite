@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 
 namespace PIApp_Lib
@@ -38,9 +37,9 @@ namespace PIApp_Lib
     {
         #region Fields
 
+        public TimeSpan cacheFor = TimeSpan.Zero;
         public Func<RequestContext, Task<ResponseState>> callback;
         public Route route;
-        public TimeSpan cacheFor = TimeSpan.Zero;
 
         #endregion Fields
 
@@ -74,9 +73,13 @@ namespace PIApp_Lib
 
         #endregion Constructors
 
+        #region Methods
+
         public string GetKey()
         {
             return $"{this.route.path}-{this.route.method}-{this.route.prams}";
         }
+
+        #endregion Methods
     }
 }
