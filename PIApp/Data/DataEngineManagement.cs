@@ -9,8 +9,6 @@ namespace PIApp_Lib.Data
 {
     public static class DataEngineManagement
     {
-        private static Dictionary<Type, DataEngine<DataClass>> dataEngines = new Dictionary<Type, DataEngine<DataClass>>();
-
         #region Fields
 
         public static LiteDatabaseAsync db;
@@ -26,9 +24,11 @@ namespace PIApp_Lib.Data
             db = new LiteDatabaseAsync($"Filename={dbFile}");
         }
 
-        public static void RegisterClass<T>(string tableName = null) where T : DataClass
+        public static DataEngine<T> SummonTable<T>(string tableName = null) where T : DataClass
         {
-            dataEngines.Add(typeof(T), new DataEngine<T>(db.GetCollection<T>(tableName)));
+            var t = new DataEngine<T>(tableName == null ? db.GetCollection<T>() : db.GetCollection<T>(tableName));
+
+            return t;
         }
 
         #endregion Methods
