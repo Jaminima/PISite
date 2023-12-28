@@ -135,10 +135,7 @@ namespace PIApp_Lib
 
             _listener = new HttpListener();
 
-            if (Debugger.IsAttached)
-                _listener.Prefixes.Add($"http://localhost:{port}/");
-            else
-                _listener.Prefixes.Add($"http://+:{port}/");
+            _listener.Prefixes.Add($"http://+:{port}/");
 
             _listener.Start();
             _listener.BeginGetContext(ReqBegin, null);

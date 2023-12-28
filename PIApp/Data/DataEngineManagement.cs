@@ -12,6 +12,7 @@ namespace PIApp_Lib.Data
         #region Fields
 
         public static LiteDatabaseAsync db;
+        private static Dictionary<Type, object> tableStore = new Dictionary<Type, object>();
 
         #endregion Fields
 
@@ -24,11 +25,25 @@ namespace PIApp_Lib.Data
             db = new LiteDatabaseAsync($"Filename={dbFile}");
         }
 
-        public static DataEngine<T> SummonTable<T>(string tableName = null) where T : DataClass
+        public static DataEngine<T> SummonTable<T>() where T : DataClass
         {
-            var t = new DataEngine<T>(tableName == null ? db.GetCollection<T>() : db.GetCollection<T>(tableName));
+            var t = new DataEngine<T>(db.GetCollection<T>());
+
+            tableStore.Add(typeof(T), t);
 
             return t;
+        }
+
+        public static DataEngine<T> GetTable<T>() where T : DataClass
+        {
+            if (tableStore.TryGetValue(typeof(T), out object table))
+            {
+                return (DataEngine<T>)table;
+            }
+            else
+            {
+                throw new Exception("Class Is Not Summoned");
+            }
         }
 
         #endregion Methods
