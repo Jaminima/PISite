@@ -51,6 +51,22 @@ namespace PIApp_Lib
             }
         }
 
+        public bool TryGetBody<T>(out T body)
+        {
+            var s = GetBody();
+
+            try
+            {
+                body = Jil.JSON.Deserialize<T>(s, Jil.Options.IncludeInherited);
+                return true;
+            }
+            catch (Exception e)
+            {
+                body = default(T);
+                return false;
+            }
+        }
+
         public bool SafeFlushClose()
         {
             try
