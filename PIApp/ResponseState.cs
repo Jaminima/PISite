@@ -8,6 +8,7 @@
         public string message;
         public bool onlyData = false;
         public int status = 200;
+        public bool ignoreSend = false;
 
         #endregion Fields
 
@@ -15,6 +16,9 @@
 
         public void Send(RequestContext context)
         {
+            if (ignoreSend)
+                return;
+
             var response = context.context.Response;
 
             response.StatusCode = status;
